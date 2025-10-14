@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LandingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,9 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/register/verify/{code}', 'UserController@verify')->name('email_verify');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/reset/password/{code}', 'UserController@new_password_view');
-Route::put('/change/password', 'UserController@change_password')->name('change_password');
 
-Route::get('/', 'LandingController@index');
+Route::get('/register/verify/{code}', [UserController::class, 'verify'])->name('email_verify');
+
+Route::get('/reset/password/{code}', [UserController::class, 'new_password_view']);
+Route::put('/change/password', [UserController::class, 'change_password'])->name('change_password');
+
+Route::get('/', [LandingController::class, 'index']);

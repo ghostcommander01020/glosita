@@ -2,7 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\MarkerController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AlertController;
+use App\Http\Controllers\FilterController;
+use App\Http\Controllers\ProxyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,43 +21,47 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group([
-    'prefix' => 'auth'
-], function () {
-    Route::post('login', 'Auth\AuthController@login')->name('login');
-    Route::post('register', 'Auth\AuthController@register');
-    Route::post('new/password', 'Auth\AuthController@resetPassword');
-    Route::get('categories', 'CategoryController@getCategories');
-    Route::get('tags', 'TagController@getTags');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
-    Route::group([
-        'middleware' => 'auth:api'
-    ], function() {
-        Route::get('logout', 'Auth\AuthController@logout');
-        Route::get('user', 'Auth\AuthController@user');
-        Route::get('user/{user_id}', 'Auth\AuthController@chatuser');
-        Route::get('markers', 'MarkerController@getMarkers')->name('get-markers');
-        Route::post('create/marker', 'MarkerController@create')->name('new-marker');
-        Route::put('update/marker/{marker}', 'MarkerController@update')->name('update-marker');
-        Route::delete('delete/marker/{marker}', 'MarkerController@delete')->name('delete-marker');
-        Route::put('update-user', 'UserController@update')->name('update-user');
-        Route::get('users-position', 'UserController@getUsersPosition');
-        Route::put('user-status', 'UserController@setUserStatus');
-        Route::put('update-user-position', 'UserController@updateUserPosition');
-        Route::get('buddies', 'UserController@getBuddies');
 
-        Route::get('get/alert', 'AlertController@getAlert');
-        Route::get('get/alerts', 'AlertController@getAllAlerts');
-        Route::post('create/alert', 'AlertController@create');
-        Route::delete('delete/alert', 'AlertController@delete');
+Route::prefix('auth')->group(function () {
+    // Public routes
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('new/password', [AuthController::class, 'resetPassword']);
+    Route::get('categories', [CategoryController::class, 'getCategories']);
+    Route::get('tags', [TagController::class, 'getTags']);
 
-        Route::get('get/filters/{category_id}', 'FilterController@getFilter');
+    // Protected routes (auth:api)
+    Route::middleware('auth:api')->group(function () {
+        Route::get('logout', [AuthController::class, 'logout']);
+        Route::get('user', [AuthController::class, 'user']);
+        Route::get('user/{user_id}', [AuthController::class, 'chatuser']);
 
-        Route::post('user/avatar', 'UserController@updateUserAvatar')->name('update-user-avatar');
+        Route::get('markers', [MarkerController::class, 'getMarkers'])->name('get-markers');
+        Route::post('create/marker', [MarkerController::class, 'create'])->name('new-marker');
+        Route::put('update/marker/{marker}', [MarkerController::class, 'update'])->name('update-marker');
+        Route::delete('delete/marker/{marker}', [MarkerController::class, 'delete'])->name('delete-marker');
 
-        Route::put('update/im/here', 'UserController@updateImHere')->name('im-here');
+        Route::put('update-user', [UserController::class, 'update'])->name('update-user');
+        Route::get('users-position', [UserController::class, 'getUsersPosition']);
+        Route::put('user-status', [UserController::class, 'setUserStatus']);
+        Route::put('update-user-position', [UserController::class, 'updateUserPosition']);
+        Route::get('buddies', [UserController::class, 'getBuddies']);
 
+        Route::get('get/alert', [AlertController::class, 'getAlert']);
+        Route::get('get/alerts', [AlertController::class, 'getAllAlerts']);
+        Route::post('create/alert', [AlertController::class, 'create']);
+        Route::delete('delete/alert', [AlertController::class, 'delete']);
+
+        Route::get('get/filters/{category_id}', [FilterController::class, 'getFilter']);
+
+        Route::post('user/avatar', [UserController::class, 'updateUserAvatar'])->name('update-user-avatar');
+        Route::put('update/im/here', [UserController::class, 'updateImHere'])->name('im-here');
     });
-    Route::get('/proxy/google-maps', 'ProxyController@proxyToGoogleMaps');
 
+    // Proxy route (public)
+    Route::get('/proxy/google-maps', [ProxyController::class, 'proxyToGoogleMaps']);
 });

@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+
+Artisan::command('prueba', function() {
+    $category = \App\Category::find(1)->tags()->get();
+    \Illuminate\Support\Facades\Log::info($category);
+});
