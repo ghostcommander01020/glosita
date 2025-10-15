@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public function getCategories()
     {
-        $categories = Category::with('tags')->orderBy('corder')->get();
+        $categories = Category::with('tags')->get();
         return response()->json($categories);
     }
 }
