@@ -116,11 +116,11 @@ class AuthController extends Controller
        }
 
         try {
-            // $data = ['name' => $request->name, 'confirmation_code' => $request['confirmation_code'], 'email' => $request->email];
-			// Mail::send('emails.confirmation_code', ['data' => $data], function($message) use ($data) {
-            //     $message->from('register@glosita.com', 'Bienvenido a Glosita');
-            //     $message->to($data['email'], $data['name'])->subject('Por favor confirma tu correo');
-            // });
+            $data = ['name' => $request->name, 'confirmation_code' => $request['confirmation_code'], 'email' => $request->email];
+			Mail::send('emails.confirmation_code', ['data' => $data], function($message) use ($data) {
+                $message->from('antonio@happy-agnesi.217-160-204-52.plesk.page', 'Bienvenido a Glosita');
+                $message->to($data['email'], $data['name'])->subject('Por favor confirma tu correo');
+            });
         } catch (\Exception $e)
         {
             // echo $e;
