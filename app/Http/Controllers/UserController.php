@@ -9,7 +9,6 @@ use App\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -52,7 +51,7 @@ class UserController extends Controller
                 if (User::where('alias',$request->alias)->exists()) return 'Alias must be unique';
             }
 
-            $user->fill(Input::except('password', 'photo', 'category'));
+            $user->fill($request->except('password', 'photo', 'category'));
 
             if (isset($request->password)) $user->password = bcrypt($request->password);
 
