@@ -59,8 +59,8 @@
         <div class="row h-100">
             <div class="col-lg-12 my-auto">
                 <div class="header-content mx-auto">
-                    <h1 class="mb-5">Correo verificado. ¡Bienvenido a Glosita!</h1>
-                    <p>Ya puedes comenzar a usar Glosita</p>
+                    <h1 class="mb-5">{{ $title ?? 'Correo verificado. ¡Bienvenido a Glosita!' }}</h1>
+                    <p>{{ $message ?? 'Ya puedes comenzar a usar Glosita' }}</p>
                 </div>
             </div>
         </div>

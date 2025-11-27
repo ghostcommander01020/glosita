@@ -168,7 +168,21 @@ class UserController extends Controller
 
     public function verify($code)
     {
-        $user = User::where('confirmation_code', $code)->where('confirmed', false)->first();
+        $user = User::where('confirmation_code', $code)->first();
+
+        if (!$user) {
+            return view('emails.register_completed', [
+                'title' => 'Código inválido',
+                'message' => 'El enlace de confirmación ha expirado o no existe.',
+            ]);
+        }
+
+        if ($user->confirmed) {
+            return view('emails.register_completed', [
+                'title' => 'Cuenta ya confirmada',
+                'message' => 'Este correo ya fue verificado anteriormente.',
+            ]);
+        }
 
         Log::warning('*************** Usuario verificado ***************');
         Log::info($user);
@@ -176,12 +190,20 @@ class UserController extends Controller
         try {
             $user->confirmed = true;
             $user->save();
-        } catch (\Exception $e)
+        } catch (\Throwable $e)
         {
-            Log::warning('Fallo al verificar usuario');
+            Log::warning('Fallo al verificar usuario', ['error' => $e->getMessage()]);
+
+            return view('emails.register_completed', [
+                'title' => 'Error al confirmar',
+                'message' => 'No pudimos confirmar tu correo. Por favor intenta nuevamente más tarde.',
+            ]);
         }
 
-        return view('emails.register_completed');
+        return view('emails.register_completed', [
+            'title' => 'Correo verificado. ¡Bienvenido a Glosita!',
+            'message' => 'Ya puedes comenzar a usar Glosita',
+        ]);
     }
 
     public function new_password_view($code)
