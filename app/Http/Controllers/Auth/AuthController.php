@@ -149,7 +149,10 @@ class AuthController extends Controller
         $request->user()->active = false;
         $request->user()->save();
 
-        $request->user()->token()->revoke();
+        if ($request->user()->currentAccessToken()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
         return response()->json([
             'message' => 'Successfully logged out'
         ]);
