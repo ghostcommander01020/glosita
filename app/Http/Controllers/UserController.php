@@ -241,9 +241,15 @@ class UserController extends Controller
         foreach ($buddies as $buddy) {
             $user = User::select('id', 'alias', 'name', 'surname', 'birthdate','sex','photo','position_lat','position_lng', 'active', 'category_id', 'visibility', 'description', 'blocked_users')->where('id', $buddy)->first();
 
+            // Skip if user ID is invalid or user not found
+            if (!$user) {
+                continue;
+            }
+
             $category_selected = Category::where('id', $user->category_id)->first();
 
-            $user->category = $category_selected->name;
+            // Only attach category name if the category exists
+            $user->category = $category_selected ? $category_selected->name : null;
 
             array_push($users, $user);
         }
