@@ -53,6 +53,11 @@ class UserController extends Controller
 
             $user->fill($request->except('password', 'photo', 'category'));
 
+            // Ensure description is updated explicitly in case it's not mass assignable
+            if ($request->has('description')) {
+                $user->description = $request->description;
+            }
+
             if (isset($request->password)) $user->password = bcrypt($request->password);
 
             $user->category_id = $category->id;
